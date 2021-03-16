@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Map</title>
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="allmapstyle.css">
+  <link rel="stylesheet" href="leaflet-beautify-marker-icon.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.5.1/chosen.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+<style>
+    #info-table {
+        width: 280px;
+    }
+    </style>
+
+</head>
+<body style="overflow-x: hidden ">
+
+ <div id="map"></div> 
+<div class="hamburger-menu" id="mapmenu">
+   <div class="iconmenu"> </div>
+  <input id="menu__toggle" type="checkbox" onclick="">
+  <label class="menu__btn" for="menu__toggle">
+ <span></span>
+  </label>
+  
+  <div class="options">
+
+ <div class="tabs">
+   <div class="tab">
+    <input type="radio" id="tab1" name="tab-group" checked>
+    <label for="tab1" class="tab-title">Список машин</label> 
+    <section class="tab-content"><div class="stuffs" id="stfHeight" >
+        <input class="form-control" type="text" placeholder="Найти.." id="search-text" onkeyup="tableSearch()"><button id="btnclear" class="btnClear btn-sm btn-outline-primary"><img src="trash-alt-solid.svg" alt=""></button>
+        
+
+       </div></section>
+   </div> 
+   <div class="tab">
+    <input type="radio" id="tab2" name="tab-group">
+    <label for="tab2" class="tab-title">Прочее</label> 
+    <section class="tab-content"> <div class="tiles" id="tilesId" >
+     <!--  style="display: none" -->
+      <h3>Карты</h3>
+        <ul class="tileul"></ul>
+        <div class="tileremoeTrack"></div>
+       <button class="buttonunlog" onclick="logoutClickHandler()">Выйти</button> 
+    </div></section>
+   </div>
+  </div>
+    </div></div>
+  
+
+
+  
+      
+  <!-- <a href="#" onclick="openbox('box'); return false" class="modal_window"><button id="modal_window" class="but" >Войти</button></a> -->
+  <!--<div id="my_modal" class="modal">
+  
+    <div class="modal_content">
+     <span class="close_modal_window">×</span> -->
+     <!--  <a href="#" onclick="openbox('box'); return false" class="modal_window"><p class="textbox">Войти</p></a> -->
+     <div id="box"  class="modal_content" style="display: block;">
+      <p class="heading">АВТОРИЗАЦИЯ</p>
+      <div class="iconlog"><img src="images/zone.png" alt="" class="imgiconlog"></div>
+      <input class="log" type="text" id="userName" name="uName" placeholder="Логин"/><br/>
+    <input class="par" type="password" name="uPassword" id="userPassword" placeholder="Пароль"/><br/>
+    <div class="mark">
+   <label class="contsave">
+   <input type="checkbox" id="saver" class="saveme" onchange="Saved()" checked="checked">
+    <span class="checkmark">Запомнить меня</span>
+    </label></div>
+	<button class="buttonlog" onclick="loginClickHandler()">Войти</button>
+  <br>
+  <!-- <button class="buttonunlog" onclick="logoutClickHandler()">Выйти</button> -->
+    <br><br>
+   <!-- <div id="content"></div> -->
+     <br><br>
+       </div>
+      
+   
+
+     <!-- </div>
+      </div> -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.1.0/dist/leaflet.css" />
+<link rel="stylesheet" href="LoginPageStyle.css">
+ <script src="DCClient.js"></script>
+  <script src="https://unpkg.com/leaflet@1.1.0/dist/leaflet.js"></script>
+  <script src="leaflet-beautify-marker-icon.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
+  <script src="MainmapScript.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.5.1/chosen.jquery.min.js"></script>
+
+
+
+ 
+<script>
+
+    
+    
+$('#btnclear').click(function(){
+	$('#search-text').val('');
+    tableSearch();
+});
+    
+
+    function tableSearch() {
+    var phrase = document.getElementById('search-text');
+    var table = document.getElementById('info-table');
+    var regPhrase = new RegExp(phrase.value, 'i');
+    var flag = false;
+    for (var i = 1; i < table.rows.length; i++) {
+        flag = false;
+        for (var j = table.rows[i].cells.length - 1; j >= 0; j--) {
+            flag = regPhrase.test(table.rows[i].cells[j].innerHTML);
+            if (flag) break;
+        }
+        if (flag) {
+            table.rows[i].style.display = "";
+            table.rows[i].style.visibility = "visible";
+        } else {
+            table.rows[i].style.display = "none";
+            table.rows[i].style.visibility = "hidden";
+        }
+
+    }
+}
+    
+
+  
+    
+    
+function onlogin(success, data) {
+    if (success === true) {
+      getListName();
+      document.getElementById('box').style.display='none';    
+    }
+}
+const varHttp = 'https://dc.tdc.org.ua'
+function loginClickHandler(ev) {
+    var u = document.getElementById("userName").value;;
+    var p = document.getElementById("userPassword").value;
+     localStorage.setItem("Login", u);
+   dc.logIn("https://dc.tdc.org.ua", "DC", u, p, onlogin);
+    var q = document.getElementById("saver");
+    if (q.checked) {
+    localStorage.setItem("PassHash", dc.logIn("https://dc.tdc.org.ua", "DC", u, p, onlogin, false));
+    };
+  //  dc.logIn("", "DC", u, p, onlogin);
+  
+}
+  
+
+function logoutClickHandler() {
+        localStorage.clear();
+    window.location.reload();
+      history.go(0);
+	}; 
+    
+    
+ var was_i_here = "";
+    try {
+      was_i_here = localStorage.getItem("Session"); 
+    }catch{};
+    
+    if (was_i_here == "ok") {
+         var click = document.querySelector('.buttonlog'); 
+  if (localStorage.Login.length < 1) {
+    
+    } else{
+        dc.logIn("https://dc.tdc.org.ua", "DC", localStorage.Login, localStorage.PassHash, onlogin, true)
+   /*   document.getElementById('userName').value = localStorage.Login;
+      document.getElementById('userPassword').value = dc.logIn("http://dc.tdc.org.ua", "DC", localStorage.Login, localStorage.PassHash, onlogin, true);*/
+      }
+
+
+    } else {
+        localStorage.setItem("Session","ok");
+    };
+
+
+ 
+
+   function displayOpen (){ 
+   var display = document.getElementById(id).style.display;
+    if(localStorage.Login === ""){       
+       document.getElementById(id).style.display='none';
+    }else{        
+       document.getElementById(id).style.display='block';
+    }
+}
+
+
+    </script>
+</body>
+</html>

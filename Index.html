@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE, NO-STORE">
+  <title>Map</title>
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="allmapstyle.css">
+  <link rel="stylesheet" href="leaflet-beautify-marker-icon.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.5.1/chosen.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@[VERSION]/dist/L.Control.Locate.min.css" />
+  <link rel="stylesheet" href="L.Control.Locate.min.css">
+  <link rel="stylesheet" href="esri-leaflet-geocoder.css">
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ==" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js" integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log==" crossorigin=""></script>
+  
+  <link rel="stylesheet" href="Control.OSMGeocoder.css">
+  
+  <link rel="stylesheet" href="leaflet-sidebar.css">
+  
+  <script src="PruneCluster.js"></script>
+  <link rel="stylesheet" href="LeafletStyleSheet.css">
+  
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/vue-ctk-date-time-picker@1.4.1/dist/vue-ctk-date-time-picker.css">
+
+  <style>
+    .table {
+      width: 100%;
+    }
+  
+    
+    .inputFindAddress {
+      position: absolute;
+      z-index: 9999999;
+      top: 10px;
+      left: 5px
+    }
+    
+    .falselog {
+      font-size: 18px;
+      background: red;
+      color: white;
+    }
+    
+    .tooltiptext {
+      visibility: hidden;
+      position: fixed;
+      top: 257px;
+      left: 17%;
+      border-width: 5px;
+      border-color: #555 transparent transparent transparent;
+      opacity: 0.8;
+      transition: opacity 0.3s;
+      border-radius: 6px;
+      padding: 7px 7px;
+      background-color: #F09090;
+      color: #fff;
+      display: inline-block;
+    }
+    
+    .tooltiptext::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: #F09090 transparent transparent transparent;
+    }
+    
+    @media screen and (max-width: 26.1cm) {
+      .tooltiptext {
+        top: 169px;
+        left: 0px;
+        width: 96%;
+      }
+      .dropbtnOt {
+        background: #f1f1f1;
+      }
+      .dropbtnTr {
+        background: #f1f1f1;    
+      }
+    }
+    
+    .parentDiv {
+      margin-top: 10px;
+      margin-left: -5px;
+      display: none;
+    }
+    
+    .showPar {
+      display: block;
+    }
+    
+    .dropParent {
+      width: 100%;
+      height: 35px;
+      text-align: left;
+    }
+    
+    .dropParents {
+      width: 90%;
+      height: 35px;
+      text-align: left;
+    }
+    
+    .parentNoDiv {
+      margin-top: 10px;
+      margin-left: -5px;
+      display: none;
+    }
+    
+    .dropNoParent {
+      width: 100%;
+      height: 35px;
+      text-align: left;
+    }
+    
+    .showParNo {
+      display: block;
+    }
+    
+    .dropdownNoPar {
+      margin-top: -8px;
+    }
+    
+    .parentDivSec {
+      margin-top: 10px;
+      margin-left: -5px;
+      display: none;
+    }
+    
+    .showSec {
+      display: block;
+    }
+
+    
+    .dropParentSec {
+      width: 90%;
+      height: 35px;
+      text-align: left;
+    }
+    
+    #plusBtn {
+      width: 80px;
+      height: 30px;
+    }
+    
+    #minusBtn {
+      width: 80px;
+      height: 30px;
+    }
+    
+    #list {
+      width: 230px;
+      height: 200px;
+    }
+    
+    .aExit {
+        background: white;
+        height: 100%;
+        width: 100%;
+        cursor: pointer;
+        border: none;      
+    }
+    .aExit:hover {
+        background: #eee;
+    }
+      
+      
+      
+      
+    .results tr[visible='false'],
+    .no-result{
+      display:none;
+    }
+
+    .results tr[visible='true']{
+      display:table-row;
+    }  
+      
+    .classImageCar {
+    width: 20px;
+    height: 20px;
+    padding: inherit;
+    margin: -17px 10px -7px 3px;
+    }
+    
+      .tabUser {
+          margin-top: 50px;
+      }
+      
+    .UserDiv {
+      display: none;    
+    }
+      .dropUsers {
+        width: 90%;
+        height: 30px;
+      }
+   
+  </style>
+
+</head>
+
+<body style="overflow-x: hidden " id="body">
+
+   <div id="sidebar" class="sidebar collapsed" style="display: none">
+        <!-- Nav tabs -->
+    <div class="sidebar-tabs">
+            <ul role="tablist">
+                <li><a href="#home" role="tab"><i class="fa fa-bars"></i></a></li>
+                <li><a href="#profile" role="tab"><i class="fa fa-map"></i></a></li>
+                <!--<li class="#report"><a href="#messages" role="tab"><i class="fa fa-file-text-o"></i></a></li>
+                <!--<li><a href="https://github.com/Turbo87/sidebar-v2" role="tab" target="_blank"><i class="fa fa-github"></i></a></li>-->
+            </ul>
+            
+            <ul role="tablistS">
+                <li><a href="#" class="aExit" onclick="logoutClickHandler()"><i class="fa fa-sign-out"></i></a></li>
+            </ul>
+            
+    </div>
+
+        <!-- Tab panes -->
+        <div class="sidebar-content">
+            <div class="sidebar-pane" id="home">
+                <h1 class="sidebar-header">
+                    Список машин
+                    <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+                </h1>
+               
+
+    <div class="options" id="optionId">
+      v 1.67 (clientGrops)
+          <!--<label for="tab1" class="tab-title">Список машин</label>-->
+          <section class="tab-content">
+          <div class="form-group">
+            <input type="text" class="search1 search form-control" placeholder="Поиск машин">
+          </div>
+          
+          
+           <!-- <div class="stuffs" id="stfHeight">
+              <input class="form-control" type="text" placeholder="Найти.." id="search-text" onkeyup="tableSearch()">
+              <button id="btnclear" class="btnClear btn-sm btn-outline-primary"><img src="trash-alt-solid.svg" alt=""></button>
+            </div> -->
+          
+          </section>
+    
+    </div>
+                
+            </div>
+            
+            <div class="sidebar-pane" id="profile">
+                <h1 class="sidebar-header">Настройки<span class="sidebar-close"><i class="fa fa-map"></i></span></h1>
+                                  
+                <!-- <input type='text' class="datepicker-here" id="my-element" data-position="right top"/>
+                <input type="text" data-range="true" data-multiple-dates-separator=" - " class="datepicker-here"/>-->
+                
+                
+          <div class="options" id="optionIdM">      
+          <!--<label for="tab2" class="tab-title">Прочее</label>-->
+           
+               
+              <div data-brackets-id="35" class="tiles" id="tilesId">
+                <h3 data-brackets-id="36">Карты</h3>
+                <ul data-brackets-id="37" class="tileul">
+                  <li>
+                    <label class="labletile">
+                      <input type="radio" name="tiles" class="radiotile" value="0" style="display: inline-block" checked> Google схема
+                    </label>
+                  </li>
+                  <li>
+                    <label class="labletile">
+                      <input type="radio" name="tiles" class="radiotile" value="1" style="display: inline-block"> Google снимки
+                    </label>
+                  </li>
+                </ul>
+            
+                
+                <!--<h3>Поиск</h3>
+                <div style="width: 100%; height: 50px;">
+                  <div class="search-box">
+                    <input type="text" class="input" id="inputFindAddressId" placeholder="Поиск по координатам..">
+                    <button class="buttonFindAddress">Поиск</button>
+                  </div>
+                </div>-->
+                    
+ 
+                    
+                    
+               <!-- <button data-brackets-id="39" class="buttonunlog" onclick="logoutClickHandler()">Выйти</button>-->
+              </div>
+              <div class="tileremoeTrack">
+               
+            <div id="app">
+             <vue-ctk-date-time-picker  utput-format="'YYYY-MM-DD'" formatted="'ll'" format="'YYYY-MM-DD '" label="H"  v-model="value" range><button type="button">Label</button></vue-ctk-date-time-picker>
+            </div>
+                
+              </div>
+              <!--<button class="buttonunlog" onclick="logoutClickHandler()">Выйти</button>-->
+
+                </div>
+            </div>
+
+            <!--<div class="sidebar-pane" id="messages">
+                <h1 class="sidebar-header">Отчёт<span class="sidebar-close"><i class="fa fa-file-text-o"></i></span></h1>
+            </div>-->
+
+            <div class="sidebar-pane" id="settingsS">
+                <h1 class="sidebar-header">Exit<span class="sidebar-close"><i class="fa fa-sign-out"></i></span></h1>
+            </div>
+        </div>
+    </div>
+
+  <div id="map" class="mapClass">
+
+  </div>
+  <!--
+  <div class="hamburger-menu" id="mapmenu">
+    <div class="iconmenu"> </div>
+    <input id="menu__toggle" type="checkbox" onclick="">
+
+    <label class="menu__btn" for="menu__toggle">
+      <span></span>
+    </label>
+
+    <div class="options" id="optionId">
+      v 1.62b(new mobil menu)
+      <div class="tabs">
+        <div class="tab">
+          <input type="radio" id="tab1" name="tab-group" checked>
+          <label for="tab1" class="tab-title">Список машин</label>
+          <section class="tab-content">
+            <div class="stuffs" id="stfHeight">
+              <input class="form-control" type="text" placeholder="Найти.." id="search-text" onkeyup="tableSearch()">
+              <button id="btnclear" class="btnClear btn-sm btn-outline-primary"><img src="trash-alt-solid.svg" alt=""></button>
+
+            </div>
+          </section>
+        </div>
+        <div class="tab">
+          <input type="radio" id="tab2" name="tab-group">
+          <label for="tab2" class="tab-title">Прочее</label>
+
+          <section class="tab-content">
+            <div class="tiles" id="tilesId">             
+              <div data-brackets-id="35" class="tiles" id="tilesId">
+                <h3 data-brackets-id="36">Карты</h3>
+                <ul data-brackets-id="37" class="tileul">
+                  <li>
+                    <label class="labletile">
+                      <input type="radio" name="tiles" class="radiotile" value="0" style="display: inline-block" checked> Google схема
+                    </label>
+                  </li>
+                  <li>
+                    <label class="labletile">
+                      <input type="radio" name="tiles" class="radiotile" value="1" style="display: inline-block"> Google снимки
+                    </label>
+                  </li>
+                </ul>
+                <h3>Поиск</h3>
+                <div style="width: 100%; height: 50px;">
+                  <div class="search-box">
+                    <input type="text" class="input" id="inputFindAddressId" placeholder="Поиск по координатам..">
+                    <button class="buttonFindAddress">Поиск</button>
+                  </div>
+                </div>
+
+                <button data-brackets-id="39" class="buttonunlog" onclick="logoutClickHandler()">Выйти</button>
+              </div>
+              <div class="tileremoeTrack"></div>
+              <button class="buttonunlog" onclick="logoutClickHandler()">Выйти</button>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+  -->
+  
+  <div id="box" class="modal_content" style="display: block;">
+    <p class="heading">АВТОРИЗАЦИЯ</p>
+    <div class="iconlog"><img src="images/zone.png" alt="" class="imgiconlog"></div>
+    <!--<span class="tooltiptext">Tooltip text</span><br/>-->
+    <input class="log" type="text" id="userName" name="uName" placeholder="Логин" />
+    <br/>
+    <input class="par" type="password" name="uPassword" id="userPassword" placeholder="Пароль" />
+    <br/>
+    <!-- <span class="tooltiptext"></span><br/>-->
+    <div class="mark">
+      <label class="contsave">
+        <input type="checkbox" id="saver" class="saveme" onchange="Saved()" checked="checked">
+        <span class="checkmark">Запомнить меня</span>
+      </label>
+    </div>
+    <button class="buttonlog" onclick="loginClickHandler()">Войти</button>
+    <br>
+    <br>
+    <br>
+    <span class="falselog"></span>
+    <span class="tooltiptext"></span>
+    <br/>
+    <br>
+    <br>
+    
+  </div>
+
+  <link rel="stylesheet" href="leaflet.css">
+  <link rel="stylesheet" href="LoginPageStyle.css">
+  <script src="DCClient.js"></script>
+  <script src="https://unpkg.com/leaflet@1.1.0/dist/leaflet.js"></script>
+  <script src="leaflet-beautify-marker-icon.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
+  <script src="MainmapScript.js?rnd=52214574563756471"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.5.1/chosen.jquery.min.js"></script>
+  <script src="leaflet.polylineDecorator.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@[VERSION]/dist/L.Control.Locate.min.js" charset="utf-8"></script>
+  <script src="L.Control.Locate.js"></script>
+  <script src="esri-leaflet.js"></script>
+  <script src="https://unpkg.com/esri-leaflet-geocoder"></script>
+  <script src="EsriLeafletGeocoding.js"></script>
+  
+  <script src="Control.OSMGeocoder.js"></script>
+  
+  <script src="leaflet-sidebar.min.js"></script>
+
+  <script src="https://unpkg.com/vue" charset="utf-8"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-ctk-date-time-picker@1.4.1/dist/vue-ctk-date-time-picker.umd.js" charset="utf-8"></script>
+  
+   
+  <script>
+  Vue.component('vue-ctk-date-time-picker', window['vue-ctk-date-time-picker']);
+      new Vue({
+        el: '#app',
+        data () {
+          return {
+            value: null
+          }
+        }
+      });
+ 
+      
+      
+    $(".icon-1").click(function() {
+      $(".input").toggleClass("active")
+      $(".container").toggleClass("active");
+      $(".buttonFindAddress").toggleClass("active");
+    })
+     
+
+   /* $('#btnclear').click(function() {
+      $('#search-text').val('');
+      tableSearch();
+    });
+
+    function tableSearch() {
+      var phrase = document.getElementById('search-text');
+      var table = document.getElementById('info-table');
+      var regPhrase = new RegExp(phrase.value, 'i');
+      var flag = false;
+      for (var i = 1; i < table.rows.length; i++) {
+        flag = false;
+        for (var j = table.rows[i].cells.length - 1; j >= 0; j--) {
+          flag = regPhrase.test(table.rows[i].cells[j].innerHTML);
+          if (flag) break;
+        }
+        if (flag) {
+          table.rows[i].style.display = "";
+          table.rows[i].style.visibility = "visible";
+        } else {
+          table.rows[i].style.display = "none";
+          table.rows[i].style.visibility = "hidden";
+        }
+      }
+    }*/
+
+    function onlogin(success, data) {
+      if (success === true) {
+        getListName();
+        document.getElementById('box').style.display = 'none';
+        $('#sidebar').css("display", "block");
+        $(".hamburger-menu").css('visibility', 'visible');
+      } else {
+        if (localStorage.PassHash.length >= 0) {
+          sessionStorage.clear();
+          //$(".falselog").text( "Неправильный логин или пароль! ");
+          $(".tooltiptext").text("Проверьте правильность ввода логина/пароля!");
+          $(".tooltiptext").css('visibility', 'visible');
+          $(".log").css('border-bottom', '2px solid #F09090');
+          $(".par").css('border-bottom', '2px solid #F09090');
+          $(".buttonlog").css('background-color', '#F09090');
+          
+        }
+      }
+    }
+    const varHttp = 'https://dc.tdc.org.ua'
+
+    function loginClickHandler(ev) {
+      var u = document.getElementById("userName").value;;
+      var p = document.getElementById("userPassword").value;
+      localStorage.setItem("Login", u);
+      dc.logIn(varHttp, "DC", u, p, onlogin);
+      var q = document.getElementById("saver");
+      if (q.checked) {
+        localStorage.setItem("PassHash", dc.logIn(varHttp, "DC", u, p, onlogin, false));
+      };
+      //  dc.logIn("", "DC", u, p, onlogin);
+    }
+
+    function logoutClickHandler() {
+      sessionStorage.clear();
+      localStorage.clear();
+      window.location.reload();
+      history.go(0);
+      location.href = "index.html";
+      $('#sidebar').css("display", "none");
+    };
+      
+    var was_i_here = "";
+    try {
+      was_i_here = localStorage.getItem("Session");
+    } catch {};
+    if (was_i_here == "ok") {
+      var click = document.querySelector('.buttonlog');
+      if (localStorage.Login.length < 1) {
+      } else {
+        dc.logIn(varHttp, "DC", localStorage.Login, localStorage.PassHash, onlogin, true)
+          
+      }
+    } else {
+      localStorage.setItem("Session", "ok");
+    };
+
+    function displayOpen() {
+      var display = document.getElementById(id).style.display;
+      if (localStorage.Login === "") {
+        document.getElementById(id).style.display = 'none';
+      } else {
+        document.getElementById(id).style.display = 'block';
+      }
+    }
+  </script>
+</body>
+
+</html>
